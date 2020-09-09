@@ -22,11 +22,14 @@ while (from < to) {
         $('.left a').each(function () {
             let temp_node = $(this).text();
            if (temp_node != 'Назад') {
-               fs.appendFileSync('domains.txt', temp_node + "\n");
+               try {
+                   fs.appendFileSync('domains.txt', temp_node + "\n")
+               } catch (e) {
+                   throw e;
+               }
            }
         });
     });
-
 
     console.log(url);
     from.setDate(from.getDate() + 1);
