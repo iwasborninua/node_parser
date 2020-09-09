@@ -1,10 +1,9 @@
-let needle = require('needle');
-let fs = require('fs');
+const needle = require('needle');
+const fs = require('fs');
 
 let from = new Date('2006-02-01');
 let to = new Date('2006-02-02');
 let url = null;
-// q1212
 
 while (from < to) {
     url = 'https://whoistory.com/' + from.getFullYear() + '/' + ("0" + (from.getMonth() + 1)) + '/' + (from.getDate() < 10 ? "0" + from.getDate(): from.getDate());
