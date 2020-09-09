@@ -9,6 +9,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "needle": "^2.5.2"
+    "cheerio": "^1.0.0-rc.3",
+    "needle": "^2.5.2",
+    "tress": "^1.1.4"
   }
 }
