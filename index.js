@@ -1,15 +1,14 @@
 const needle = require('needle');
 const fs = require('fs');
 const cheerio = require('cheerio');
+const moment = require('moment');
 
-let from = new Date('2006-02-01');
-let to = new Date('2006-06-01');
+let from = moment('2006-02-01', "YYYY-MM-DD");
+let to = moment('2006-06-01', "YYYY-MM-DD");
 let url = null;
 
 while (from < to) {
-    url = 'https://whoistory.com/' + from.getFullYear() + '/' +
-        ((from.getMonth() + 1) < 10 ? '0' + (from.getMonth() + 1) : (from.getMonth() + 1)) + '/' +
-        (from.getDate() < 10 ? "0" + from.getDate() : from.getDate());
+    url = 'https://whoistory.com/' + from.format("YYYY/MM/DD");
 
     needle.get(url, function (err, res) {
         if (err) {
@@ -32,5 +31,5 @@ while (from < to) {
     });
 
     console.log(url);
-    from.setDate(from.getDate() + 1);
+    from.add( 1, 'day');
 }
