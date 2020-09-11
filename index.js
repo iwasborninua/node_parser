@@ -5,7 +5,7 @@ const moment = require('moment');
 const tress = require('tress');
 
 let from = moment('2006-02-01', "YYYY-MM-DD");
-let to = moment('2006-02-11', "YYYY-MM-DD");
+let to = moment('2007-01-01', "YYYY-MM-DD");
 let url = null;
 var domains = [];
 
@@ -20,14 +20,13 @@ let q = tress(function (url, callback) {
         $('.left a').each(function () {
             let temp_node = $(this).text();
             if (temp_node != 'Назад') {
-                // console.log(temp_node);
-                domains.push(temp_node);
+                fs.appendFileSync('./domains.txt', temp_node + "\n");
             }
         });
     });
 
     callback();
-}, 1);
+}, 5);
 
 while (from < to) {
     url = 'https://whoistory.com/' + from.format("YYYY/MM/DD");
@@ -41,5 +40,5 @@ q.drain = function () {
 }
 
 q.success = function () {
-    console.log(domains);
+    console.log(this);
 };
