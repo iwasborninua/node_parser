@@ -7,7 +7,7 @@ const tress = require('tress');
 let from = moment('2006-02-01', "YYYY-MM-DD");
 let to = moment('2006-02-11', "YYYY-MM-DD");
 let url = null;
-let domains = [];
+var domains = [];
 
 let q = tress(function (url, callback) {
     needle.get(url, function (err, res) {
@@ -20,14 +20,14 @@ let q = tress(function (url, callback) {
         $('.left a').each(function () {
             let temp_node = $(this).text();
             if (temp_node != 'Назад') {
-                console.log(temp_node);
-                domains.push(temp_node + "\n");
+                // console.log(temp_node);
+                domains.push(temp_node);
             }
         });
     });
 
     callback();
-}, 2);
+}, 1);
 
 while (from < to) {
     url = 'https://whoistory.com/' + from.format("YYYY/MM/DD");
@@ -35,6 +35,11 @@ while (from < to) {
     from.add(1, 'day');
 };
 
-q.drain = () => {
+q.drain = function () {
     console.log('end');
+    fs.writeFileSync('./domains.txt', domains);
 }
+
+q.success = function () {
+    console.log(domains);
+};
