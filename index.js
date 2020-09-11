@@ -24,7 +24,6 @@ let q = tress(function (url, callback) {
                 domains.push(temp_node + "\n");
             }
         });
-
     });
 
     callback();
