@@ -1,44 +1,38 @@
-const needle = require('needle');
 const fs = require('fs');
-const cheerio = require('cheerio');
 const moment = require('moment');
-const tress = require('tress');
+const Bluebird = require('bluebird');
+const got = require('got');
+const cheerio = require('cheerio');
 
-let from = moment('2006-02-01', "YYYY-MM-DD");
-let to = moment('2007-01-01', "YYYY-MM-DD");
-let url = null;
-var domains = [];
-
-let q = tress(function (url, callback) {
-    needle.get(url, function (err, res) {
-        if (err) throw err;
-
-        // вытянули всю html страницу
-        let $ = cheerio.load(res.body);
-
-        // Фильтруем
-        $('.left a').each(function () {
-            let temp_node = $(this).text();
-            if (temp_node != 'Назад') {
-                fs.appendFileSync('./domains.txt', temp_node + "\n");
-            }
-        });
-    });
-
-    callback();
-}, 5);
+let urls = [];
+let from = moment('2006-01-01', 'YYYY-MM-DD');
+let to = moment('2008-01-01', 'YYYY-MM-DD');
 
 while (from < to) {
-    url = 'https://whoistory.com/' + from.format("YYYY/MM/DD");
-    q.push(url);
-    from.add(1, 'day');
-};
-
-q.drain = function () {
-    console.log('end');
-    fs.writeFileSync('./domains.txt', domains);
+    let url = 'https://whoistory.com/' + from.format("YYYY/MM/DD");
+    urls.push(url);
+    from.add(1, 'days');
 }
 
-q.success = function () {
-    console.log(this);
-};
+async function getAllDomains(urls) {
+    await Bluebird.map(urls, async url => {
+        try {
+            let response = await got(url)
+                .then(console.log("Parsing: " + url))
+                .catch(function () {
+                    console.log('1212');
+                });
+            let $ = cheerio.load(response.body);
+
+            $('.left a').each(async (i, elem) => {
+                let elementToWrite = $(elem).text();
+                await fs.promises.appendFile('domains.txt', elementToWrite !== 'Назад' ? `${elementToWrite}\n` : '');
+            });
+
+        } catch (err) {
+            console.log(err);
+        }
+    }, {concurrency: 3})
+}
+
+getAllDomains(urls);
