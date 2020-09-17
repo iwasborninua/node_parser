@@ -26,9 +26,8 @@ async function getAllDomains(urls) {
 
             let $ = cheerio.load(response.body);
 
-            $('.left a').each(async (i, elem) => {
-                let elementToWrite = $(elem).text();
-                elementToWrite !== 'Назад' ? domains_string += `${elementToWrite}\n`: '';
+            $('div.left > a:not(.backlink)').each(async (i, elem) => {
+                domains_string += $(elem).text() + '\n';
             });
 
             await fs.promises.appendFile('domains.txt', domains_string != undefined ? domains_string: '');
