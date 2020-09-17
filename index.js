@@ -17,7 +17,7 @@ while (from < to) {
 async function getAllDomains(urls) {
     await Bluebird.map(urls, async url => {
         try {
-            let domains_string;
+            let domains_string = '';
             let response = await got(url)
                 .then(console.log("Parsing: " + url))
                 .catch(function () {
@@ -31,9 +31,7 @@ async function getAllDomains(urls) {
                 elementToWrite !== 'Назад' ? domains_string += `${elementToWrite}\n`: '';
             });
 
-            console.log(domains_string);debugger;
-
-            await fs.promises.appendFile('domains.txt', domains_string !== undefined ? domains_string: '');
+            await fs.promises.appendFile('domains.txt', domains_string != undefined ? domains_string: '');
 
         } catch (err) {
             console.log(err);
