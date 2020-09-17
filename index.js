@@ -6,7 +6,7 @@ const cheerio = require('cheerio');
 
 let urls = [];
 let from = moment('2006-01-01', 'YYYY-MM-DD');
-let to = moment('2008-01-01', 'YYYY-MM-DD');
+let to = moment('2020-01-01', 'YYYY-MM-DD');
 
 while (from < to) {
     let url = 'https://whoistory.com/' + from.format("YYYY/MM/DD");
@@ -17,17 +17,23 @@ while (from < to) {
 async function getAllDomains(urls) {
     await Bluebird.map(urls, async url => {
         try {
+            let domains_string;
             let response = await got(url)
                 .then(console.log("Parsing: " + url))
                 .catch(function () {
-                    console.log('1212');
+                    console.log("ERROR: " + url);
                 });
+
             let $ = cheerio.load(response.body);
 
             $('.left a').each(async (i, elem) => {
                 let elementToWrite = $(elem).text();
-                await fs.promises.appendFile('domains.txt', elementToWrite !== 'Назад' ? `${elementToWrite}\n` : '');
+                elementToWrite !== 'Назад' ? domains_string += `${elementToWrite}\n`: '';
             });
+
+            console.log(domains_string);debugger;
+
+            await fs.promises.appendFile('domains.txt', domains_string !== undefined ? domains_string: '');
 
         } catch (err) {
             console.log(err);
