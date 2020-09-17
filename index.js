@@ -30,7 +30,7 @@ async function getAllDomains(urls) {
                 domains_string += $(elem).text() + '\n';
             });
 
-            await fs.promises.appendFile('domains.txt', domains_string != undefined ? domains_string: '');
+            await fs.promises.appendFile('domains.txt', domains_string);
 
         } catch (err) {
             console.log(err);
